@@ -1,0 +1,7 @@
+{
+  "name": "Gemini TTS Studio",
+  "description": "A professional-grade text-to-speech application powered by Gemini 2.5, featuring multiple voice profiles and customizable speech parameters.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
