@@ -3,7 +3,7 @@ import { GeminiJudge } from '../services/GeminiJudge';
 import { startAudioRecording } from '../utils/recorder';
 import { FeedbackResult } from '../interfaces/Judge';
 
-export function JudgeTestBench({ activeSentence }: { activeSentence?: string }) {
+export function JudgeTestBench({ activeSentence, onScore }: { activeSentence?: string; onScore?: (score: number) => void }) {
     const [targetText, setTargetText] = useState(activeSentence || "Hello, I would like a coffee");
 
     // Update local state if prop changes
@@ -53,6 +53,7 @@ export function JudgeTestBench({ activeSentence }: { activeSentence?: string }) 
 
             const result = await judgeRef.current.evaluate(audioBlob, targetText);
             setFeedback(result);
+            if (onScore) onScore(result.score);
         } catch (err: any) {
             console.error(err);
             setError(err.message || "Evaluation failed");

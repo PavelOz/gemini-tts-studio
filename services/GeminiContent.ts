@@ -8,12 +8,16 @@ export class GeminiContent implements ContentGenerator {
         this.ai = new GoogleGenAI({ apiKey });
     }
 
-    async generate(topic: string, level: string): Promise<Scenario> {
+    async generate(topic: string, sourceLang: string = 'English', targetLang: string = 'English', difficulty: string = 'medium'): Promise<Scenario> {
         const systemInstruction = `You are a scriptwriter for language learners. 
 Create a realistic dialogue between two people about the topic: '${topic}'. 
-Level: '${level}'. 
+Target Language: '${targetLang}'.
+Source Language (for translations): '${sourceLang}'.
+Difficulty Level: '${difficulty}'.
 Alternating speakers (A/B). 
-Return a JSON object matching the Scenario schema. 
+Return a JSON object matching the Scenario schema.
+The 'original' text must be in ${targetLang}.
+The 'translation' text must be in ${sourceLang}.
 Include 6-10 distinct turns.
 Do not include chatty conversational filler unless natural for the lesson.`;
 
@@ -26,8 +30,8 @@ Do not include chatty conversational filler unless natural for the lesson.`;
                     items: {
                         type: "OBJECT",
                         properties: {
-                            original: { type: "STRING", description: "The sentence in the target language (English)." },
-                            translation: { type: "STRING", description: "Translation or meaning hint." },
+                            original: { type: "STRING", description: `The sentence in ${targetLang}.` },
+                            translation: { type: "STRING", description: `Translation in ${sourceLang}.` },
                             difficulty: { type: "STRING", enum: ["easy", "medium", "hard"] },
                             context_notes: { type: "STRING", description: "Context or emotion." },
                             speaker: { type: "STRING", enum: ["A", "B"] }

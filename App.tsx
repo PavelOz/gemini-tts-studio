@@ -18,6 +18,17 @@ function App() {
   const [topic, setTopic] = useState("");
   const [activeBubbleIndex, setActiveBubbleIndex] = useState<number | null>(null);
 
+  // --- Module 4: Settings & Logic ---
+  const [sourceLang, setSourceLang] = useState("English");
+  const [targetLang, setTargetLang] = useState("English");
+  const [difficulty, setDifficulty] = useState("medium");
+  const [sessionScores, setSessionScores] = useState<number[]>([]);
+
+  // Calculate Average Session Score
+  const averageScore = sessionScores.length > 0
+    ? Math.round(sessionScores.reduce((a, b) => a + b, 0) / sessionScores.length)
+    : null;
+
   // --- Module 1: TTS State ---
   const [speed, setSpeed] = useState(1.0);
   const [voiceId, setVoiceId] = useState(VOICES[0].id);
@@ -45,34 +56,76 @@ function App() {
     <div className="container" style={{ paddingBottom: '40px' }}>
       <header>
         <h1>Shadowing Studio</h1>
+        {averageScore !== null && (
+          <div className="session-score" style={{
+            background: 'var(--surface)',
+            padding: '4px 12px',
+            borderRadius: '12px',
+            border: '1px solid var(--border)',
+            fontWeight: 600,
+            color: averageScore > 80 ? '#4ade80' : '#fbbf24'
+          }}>
+            Avg. Score: {averageScore}
+          </div>
+        )}
       </header>
 
-      {/* --- Topic Generator --- */}
-      <section className="card">
-        <h2 className="section-title">Dialog Generator</h2>
-        <div style={{ display: 'flex', gap: '8px' }}>
+      {/* --- Settings Bar (Sticky) --- */}
+      <section className="card" style={{ position: 'sticky', top: 10, zIndex: 50, border: '1px solid var(--primary)', boxShadow: '0 4px 20px rgba(0,0,0,0.5)' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '8px' }}>
+          <div>
+            <label style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Translate To</label>
+            <select className="text-input" value={sourceLang} onChange={e => setSourceLang(e.target.value)} style={{ padding: '6px' }}>
+              <option value="English">English</option>
+              <option value="Russian">Russian</option>
+            </select>
+          </div>
+          <div>
+            <label style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Target Language</label>
+            <select className="text-input" value={targetLang} onChange={e => setTargetLang(e.target.value)} style={{ padding: '6px' }}>
+              <option value="English">English</option>
+              <option value="Chinese (Mandarin)">Chinese</option>
+              <option value="Kazakh">Kazakh</option>
+              <option value="French">French</option>
+            </select>
+          </div>
+        </div>
+
+        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+          <select
+            className="text-input"
+            value={difficulty}
+            onChange={e => setDifficulty(e.target.value)}
+            style={{ width: '80px', padding: '8px' }}
+          >
+            <option value="easy">Easy</option>
+            <option value="medium">Med</option>
+            <option value="hard">Hard</option>
+          </select>
           <input
             className="text-input"
+            style={{ flex: 1 }}
             value={topic}
             onChange={e => setTopic(e.target.value)}
-            placeholder="Topic (e.g., Ordering Coffee)"
+            placeholder="Topic..."
             disabled={isLessonLoading}
           />
           <button
             className="btn-primary"
-            style={{ width: 'auto' }}
+            style={{ width: 'auto', padding: '0 16px' }}
             onClick={() => {
-              generateLesson(topic, 'medium');
+              generateLesson(topic, sourceLang, targetLang, difficulty);
               setActiveBubbleIndex(null);
+              setSessionScores([]); // Reset score on new lesson
             }}
             disabled={isLessonLoading || !topic}
           >
-            {isLessonLoading ? 'Writing Script...' : 'Generate Dialog'}
+            {isLessonLoading ? '...' : 'Go'}
           </button>
         </div>
       </section>
 
-      {/* Global Settings (Optional but helpful context) */}
+      {/* Global Settings (Voices) */}
       <section style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '12px' }}>
         <select
           className="text-input"
@@ -107,6 +160,7 @@ function App() {
                 voiceProvider={voiceProvider}
                 voiceId={voiceId}
                 speed={speed}
+                onScore={(score) => setSessionScores(prev => [...prev, score])}
               />
             ))}
             <div ref={scrollEndRef} />

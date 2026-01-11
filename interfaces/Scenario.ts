@@ -13,5 +13,5 @@ export interface Scenario {
 }
 
 export interface ContentGenerator {
-    generate(topic: string, level: string): Promise<Scenario>;
+    generate(topic: string, sourceLang: string, targetLang: string, difficulty: string): Promise<Scenario>;
 }

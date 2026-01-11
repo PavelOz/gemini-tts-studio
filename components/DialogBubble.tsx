@@ -10,6 +10,7 @@ interface DialogBubbleProps {
     voiceProvider: GeminiVoice | null;
     voiceId: string;
     speed: number;
+    onScore: (score: number) => void;
 }
 
 export const DialogBubble: React.FC<DialogBubbleProps> = ({
@@ -18,7 +19,8 @@ export const DialogBubble: React.FC<DialogBubbleProps> = ({
     onClick,
     voiceProvider,
     voiceId,
-    speed
+    speed,
+    onScore
 }) => {
     const isMe = item.speaker === 'B';
     const [audioUrl, setAudioUrl] = useState<string | null>(null);
@@ -123,7 +125,7 @@ export const DialogBubble: React.FC<DialogBubbleProps> = ({
 
                         {/* Judge Recorder */}
                         <div style={{ background: 'rgba(0,0,0,0.2)', borderRadius: '8px', padding: '8px' }}>
-                            <JudgeTestBench activeSentence={item.original} />
+                            <JudgeTestBench activeSentence={item.original} onScore={onScore} />
                         </div>
                     </div>
                 </div>

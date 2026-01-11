@@ -15,7 +15,12 @@ export function useLesson() {
         }
     }, []);
 
-    const generateLesson = async (topic: string, level: string = 'medium') => {
+    const generateLesson = async (
+        topic: string,
+        sourceLang: string = 'English',
+        targetLang: string = 'English',
+        difficulty: string = 'medium'
+    ) => {
         if (!generatorRef.current) {
             setError("Service not initialized (Missing API Key)");
             return;
@@ -25,7 +30,7 @@ export function useLesson() {
         setError(null);
 
         try {
-            const data = await generatorRef.current.generate(topic, level);
+            const data = await generatorRef.current.generate(topic, sourceLang, targetLang, difficulty);
             setLesson(data);
         } catch (err: any) {
             console.error(err);
