@@ -25,6 +25,7 @@ export const DialogBubble: React.FC<DialogBubbleProps> = ({
     const isMe = item.speaker === 'B';
     const [audioUrl, setAudioUrl] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
+    const [playbackSpeed, setPlaybackSpeed] = useState<number>(1.0);
     const audioRef = useRef<HTMLAudioElement>(null);
 
     // Reset audio when item changes (unlikely if keyed by idx) or collapse?
@@ -39,7 +40,7 @@ export const DialogBubble: React.FC<DialogBubbleProps> = ({
         setAudioUrl(null);
 
         try {
-            const buffer = await voiceProvider.speak(item.original, speed, voiceId);
+            const buffer = await voiceProvider.speak(item.original, playbackSpeed, voiceId);
             const blob = new Blob([buffer], { type: 'audio/wav' });
             const url = URL.createObjectURL(blob);
             setAudioUrl(url);
@@ -111,16 +112,31 @@ export const DialogBubble: React.FC<DialogBubbleProps> = ({
                     <div onClick={e => e.stopPropagation()} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
 
                         {/* TTS Controls */}
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                            <button
-                                className="btn-primary"
-                                onClick={handlePlay}
-                                disabled={isLoading}
-                                style={{ padding: '8px 16px', fontSize: '0.9rem', flex: 1 }}
-                            >
-                                {isLoading ? 'Loading...' : '▶ Listen'}
-                            </button>
-                            {audioUrl && <audio ref={audioRef} src={audioUrl} />}
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                <label style={{ fontSize: '0.8rem', color: '#cbd5e1' }}>Speed: {playbackSpeed}x</label>
+                                <input
+                                    type="range"
+                                    min="0.5"
+                                    max="1.5"
+                                    step="0.1"
+                                    value={playbackSpeed}
+                                    onChange={(e) => setPlaybackSpeed(parseFloat(e.target.value))}
+                                    style={{ width: '60%' }}
+                                />
+                            </div>
+
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                <button
+                                    className="btn-primary"
+                                    onClick={handlePlay}
+                                    disabled={isLoading}
+                                    style={{ padding: '8px 16px', fontSize: '0.9rem', flex: 1 }}
+                                >
+                                    {isLoading ? 'Loading...' : '▶ Listen'}
+                                </button>
+                                {audioUrl && <audio ref={audioRef} src={audioUrl} />}
+                            </div>
                         </div>
 
                         {/* Judge Recorder */}
