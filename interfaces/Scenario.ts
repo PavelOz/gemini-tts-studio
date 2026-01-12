@@ -3,6 +3,7 @@ export interface LessonItem {
     translation: string;
     difficulty: 'easy' | 'medium' | 'hard';
     context_notes?: string;
+    transliteration?: string;
     speaker: 'A' | 'B';
 }
 

@@ -11,6 +11,7 @@ interface DialogBubbleProps {
     voiceId: string;
     speed: number;
     onScore: (score: number) => void;
+    showTransliteration?: boolean;
 }
 
 export const DialogBubble: React.FC<DialogBubbleProps> = ({
@@ -20,7 +21,8 @@ export const DialogBubble: React.FC<DialogBubbleProps> = ({
     voiceProvider,
     voiceId,
     speed,
-    onScore
+    onScore,
+    showTransliteration
 }) => {
     const isMe = item.speaker === 'B';
     const [audioUrl, setAudioUrl] = useState<string | null>(null);
@@ -87,6 +89,11 @@ export const DialogBubble: React.FC<DialogBubbleProps> = ({
             <div style={bubbleStyle}>
                 {/* Header (Text) */}
                 <div>
+                    {showTransliteration && item.transliteration && (
+                        <div style={{ fontSize: '0.85rem', color: '#94a3b8', marginBottom: '2px', fontWeight: 500 }}>
+                            {item.transliteration}
+                        </div>
+                    )}
                     <div style={{ fontWeight: 600, fontSize: '1.05rem', marginBottom: '4px' }}>
                         {item.original}
                     </div>

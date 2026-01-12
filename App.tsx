@@ -22,6 +22,7 @@ function App() {
   const [sourceLang, setSourceLang] = useState("English");
   const [targetLang, setTargetLang] = useState("English");
   const [difficulty, setDifficulty] = useState("medium");
+  const [showPinyin, setShowPinyin] = useState(true);
   const [sessionScores, setSessionScores] = useState<number[]>([]);
 
   // Calculate Average Session Score
@@ -81,7 +82,15 @@ function App() {
             </select>
           </div>
           <div>
-            <label style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Target Language</label>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <label style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Target Language</label>
+              {targetLang.includes('Chinese') && (
+                <label style={{ fontSize: '0.7rem', display: 'flex', alignItems: 'center', gap: '4px', cursor: 'pointer' }}>
+                  <input type="checkbox" checked={showPinyin} onChange={e => setShowPinyin(e.target.checked)} />
+                  Pinyin
+                </label>
+              )}
+            </div>
             <select className="text-input" value={targetLang} onChange={e => setTargetLang(e.target.value)} style={{ padding: '6px' }}>
               <option value="English">English</option>
               <option value="Chinese (Mandarin)">Chinese</option>
@@ -161,6 +170,7 @@ function App() {
                 voiceId={voiceId}
                 speed={speed}
                 onScore={(score) => setSessionScores(prev => [...prev, score])}
+                showTransliteration={showPinyin}
               />
             ))}
             <div ref={scrollEndRef} />

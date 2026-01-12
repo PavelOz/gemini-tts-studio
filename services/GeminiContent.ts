@@ -16,6 +16,11 @@ Source Language (for translations): '${sourceLang}'.
 Difficulty Level: '${difficulty}'.
 Alternating speakers (A/B). 
 Return a JSON object matching the Scenario schema.
+
+STRICT FORMATTING RULES:
+1. CLEAN TEXT ONLY: The 'original' field must contain ONLY the target language script (e.g., Chinese characters). Do NOT include Pinyin or parentheses or ANY romanization in this field.
+2. MANDATORY SEPARATION: If the Target Language is 'Chinese (Mandarin)', you MUST put the Pinyin (with tone marks) in the 'transliteration' field. If the language is NOT Chinese, transliteration can be null.
+
 The 'original' text must be in ${targetLang}.
 The 'translation' text must be in ${sourceLang}.
 Include 6-10 distinct turns.
@@ -32,6 +37,7 @@ Do not include chatty conversational filler unless natural for the lesson.`;
                         properties: {
                             original: { type: "STRING", description: `The sentence in ${targetLang}.` },
                             translation: { type: "STRING", description: `Translation in ${sourceLang}.` },
+                            transliteration: { type: "STRING", description: "Pinyin or Romanization (optional)." },
                             difficulty: { type: "STRING", enum: ["easy", "medium", "hard"] },
                             context_notes: { type: "STRING", description: "Context or emotion." },
                             speaker: { type: "STRING", enum: ["A", "B"] }
